@@ -1,8 +1,28 @@
 import { InfoOutlined, PlayArrow } from "@material-ui/icons";
-import React from 'react'
+import axios from "axios";
+import React from 'react';
+import { useEffect, useState } from "react";
 import "./featured.scss";
 
+/*if we have any type, we will pass it as the query in the getrandom content*/
 export default function Featured({type}) {
+  const [content, setContent] = useState({});
+
+  useEffect(() => {
+    const getRandomContent = async () => {
+      try{
+        const res = await axios.get(`/movies/random?type=${type}`, {
+          headers:{
+            token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZDlkZDc2YWI4OTJlZGUxYjhjNjQ3YyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTkyOTM1OTMsImV4cCI6MTY1OTcyNTU5M30.Ij8hVnMCtTi7yRbNAhlbOfyULBGiT7fN14K6ugKMdBw",
+          },
+        });
+        setContent(res.data[0]);
+      }catch(err){
+        console.log(err);
+      }
+    }
+    getRandomContent();
+  },[type]);
   return (
     <div className='featured'>
       {type && (
@@ -26,15 +46,16 @@ export default function Featured({type}) {
         </div>
       )}
       <img 
-      width="100%"
-      src='https://images.pexels.com/photos/6899260/pexels-photo-6899260.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500' alt=""/>
+        width="100%"
+        src={content.img} alt=""
+      />
       <div className="info">
         <img
-          src="https://occ-0-1432-1433.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABUZdeG1DrMstq-YKHZ-dA-cx2uQN_YbCYx7RABDk0y7F8ZK6nzgCz4bp5qJVgMizPbVpIvXrd4xMBQAuNe0xmuW2WjoeGMDn1cFO.webp?r=df1"
+          src={content.imgTitle}
           alt=""
         />
         <span className='desc'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam voluptatum blanditiis quae sed. Hic debitis accusantium fugit cupiditate dolorum facere voluptatem excepturi magnam autem, blanditiis, optio eius, sequi vitae aperiam!
+          {content.desc}
         </span>
         <div className="buttons">
           <button className='play'>
